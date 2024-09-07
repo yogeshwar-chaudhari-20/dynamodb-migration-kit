@@ -130,3 +130,16 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License.
+
+## Additional Resources
+
+### Automate migrations with GitHub Actions
+
+- Instructions are registering OIDC provider.
+  [Read more](https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/)
+
+- CDK for creating AWS resources.
+  [Read more](https://gist.github.com/yogeshwar-chaudhari-20/9cb03ad7ee7002c95d05bd47997a3bc7)
+
+- Github actions workflow.
+  [Read more](https://gist.github.com/yogeshwar-chaudhari-20/82a3cd94c82a3edabc393de0f9d937aa).
