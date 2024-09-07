@@ -22,6 +22,8 @@ npm install dynamodb-migration-kit
 
 ### Initializing the Configuration
 
+[example-typescript-project](https://github.com/yogeshwar-chaudhari-20/dynamodb-migration-kit/tree/main/example-typescript-project)
+
 Before you can start using the migration kit, you need to initialize the configuration:
 
 ```bash
