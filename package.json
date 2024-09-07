@@ -2,6 +2,15 @@
   "name": "dynamodb-migration-kit",
   "version": "1.1.0",
   "description": "CLI to manage DynamoDB migrations.",
+  "keywords": [
+    "dynamodb",
+    "migration-tool",
+    "dynamodb-migration-kit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yogeshwar-chaudhari-20/dynamodb-migration-kit"
+  },
   "scripts": {
     "build": "tsc",
     "postbuild": "copyfiles -u 1 src/templates/migration.template src/templates/dynamodb-migration-kit.config.template dist/",
