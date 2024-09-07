@@ -1,0 +1,86 @@
+name: DynamoDB Data Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "Command to run for Dynamo Data Migrations"
+        required: true
+        type: choice
+        options:
+          - up
+          - down
+          - status
+        default: status
+      environment:
+        description: "Specify the environment for the migration"
+        required: true
+        type: choice
+        options:
+          - production
+          - non-production
+        default: non-production
+
+# Permission can be added at job level or workflow level
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  run-migration:
+    runs-on: ubuntu-latest
+    env:
+      # These variables can be stored in environments of your source control provider.
+      TARGET_DYNAMO_ENV: ${{ github.event.inputs.environment }}
+      AWS_REGION: ap-southeast-2
+
+      # Production role to assume
+      ROLE_PRODUCTION: arn:aws:iam::<AWS_ACCOUNT_ID>:role/github-dynamodb-migration-workflow-role
+      SESSION_NAME_PRODUCTION: github-dynamodb-production-session
+
+      # Non Production role to assume
+      ROLE_NON_PRODUCTION: arn:aws:iam::<AWS_ACCOUNT_ID>:role/github-dynamodb-migration-workflow-role
+      SESSION_NAME_NON_PRODUCTION: github-dynamodb-non-production-session
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g dynamodb-migration-kit
+
+      - name: Authenticate with AWS
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ env.TARGET_DYNAMO_ENV == 'production' && env.ROLE_PRODUCTION || env.ROLE_NON_PRODUCTION }}
+          role-session-name: ${{ env.TARGET_DYNAMO_ENV == 'production' && env.SESSION_NAME_PRODUCTION || env.SESSION_NAME_NON_PRODUCTION }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # The DynamoDB Migration Kit should be able to read the credentials directly.
+      # Otherwise, we need to create the credentials file manually.
+      - name: Create AWS credentials file
+        run: |
+          mkdir -p /home/runner/.aws
+          echo "[default]" > /home/runner/.aws/credentials
+          echo "aws_access_key_id = $AWS_ACCESS_KEY_ID" >> /home/runner/.aws/credentials
+          echo "aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" >> /home/runner/.aws/credentials
+          echo "aws_session_token = $AWS_SESSION_TOKEN" >> /home/runner/.aws/credentials
+
+      # Migration files are pure TS. Tool requires the migrations file to be built.
+      - name: Code Build
+        run: npx tsc
+
+      # Optional step.
+      - name: Run status
+        run: dynamodb-migration-kit status
+
+      - name: Run Dynamo Data Migrations
+        if: ${{ github.event.inputs.command != 'status' }}
+        run: dynamodb-migration-kit ${{ github.event.inputs.command }}
