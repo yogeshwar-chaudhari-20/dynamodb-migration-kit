@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-migration-kit",
-  "version": "0.0.1-1",
+  "version": "1.0.0",
   "description": "CLI to manage DynamoDB migrations.",
   "scripts": {
     "build": "tsc",
