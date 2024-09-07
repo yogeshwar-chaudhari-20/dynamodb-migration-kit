@@ -1,0 +1,37 @@
+{
+  "name": "dynamodb-migration-kit",
+  "version": "0.0.0",
+  "description": "CLI to manage DynamoDB migrations.",
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "copyfiles -u 1 src/templates/migration.template src/templates/dynamodb-migration-kit.config.template dist/",
+    "start": "npx tsx src/index.ts",
+    "watch": "npx tsx watch src/index.ts",
+    "test": "jest --silent=true",
+    "test:watch": "jest --watchAll"
+  },
+  "bin": {
+    "dynamodb-migration-kit": "./dist/index.js"
+  },
+  "author": "Yogeshwar Girish Chaudhari",
+  "license": "MIT",
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.645.0",
+    "@aws-sdk/client-s3": "^3.645.0",
+    "@aws-sdk/util-dynamodb": "^3.645.0",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/commander": "^2.12.2",
+    "@types/inquirer": "^9.0.7",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.5.4",
+    "copyfiles": "^2.4.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "commander": "^12.1.0"
+  }
+}
